@@ -1,5 +1,5 @@
 {
-  "last_checked_utc": "2026-11-25T15:16:07Z",
+  "last_checked_utc": "2026-11-25T16:28:49Z",
   "ceilings_usd_per_year": {
     "japan": 8.0,
     "hongkong": 5.0
@@ -7,14 +7,14 @@
   "targets": {
     "natkvm_jp_flash": {
       "url": "https://khanwebhost.com/store/nat-vps-flash-sale/256-mb-sgjphksasepknlde",
-      "checked_utc": "2026-11-25T15:16:09Z",
+      "checked_utc": "2026-11-25T16:28:51Z",
       "price_usd_per_year": 5.5,
       "detail": "flash-sale page says out of stock",
       "status": "out_of_stock"
     },
     "natkvm_jp_order": {
       "url": "https://khanwebhost.com/store/ovz-nat-vps/lxc-256-mb-nat",
-      "checked_utc": "2026-11-25T15:16:13Z",
+      "checked_utc": "2026-11-25T16:28:55Z",
       "japan_in_page_text": false,
       "hongkong_in_page_text": false,
       "known_price_usd_per_year": 5.5,
@@ -23,7 +23,7 @@
     },
     "natkvm_jp_page": {
       "url": "https://natkvm.net/japan-nat-vps.html",
-      "checked_utc": "2026-11-25T15:16:13Z",
+      "checked_utc": "2026-11-25T16:28:56Z",
       "price_usd_per_year": 6.5,
       "order_link_present": true,
       "status": "listed",
@@ -31,31 +31,31 @@
     },
     "natvps_jp_nat512": {
       "url": "https://clients.natvps.net/?/cart/kvm-japan/",
-      "checked_utc": "2026-11-25T15:16:07Z",
+      "checked_utc": "2026-11-25T16:28:49Z",
       "status": "excluded",
       "detail": "Excluded 2026-11-25: checkout accepts cryptocurrency only (no card, no PayPal); user's only payment method is a Mastercard debit card. Japan NAT512 was in stock at $7.50/yr when last checked, but can never be bought."
     },
     "natkvm_hk": {
       "url": "https://khanwebhost.com/store/ovz-nat-vps/lxc-256-mb-nat",
-      "checked_utc": "2026-11-25T15:16:07Z",
+      "checked_utc": "2026-11-25T16:28:49Z",
       "status": "over_budget",
       "price_usd_per_year": 5.5,
       "detail": "Hong Kong LXC NAT 256M is $5.50/year (browser-verified 2026-11-25), over the $5.00 Hong Kong ceiling, so never a hit at this price. A hit needs the price to drop to $5.00 or less."
     },
     "natvps_hk": {
       "url": "https://clients.natvps.net/?/cart/kvm-japan/",
-      "checked_utc": "2026-11-25T15:16:07Z",
+      "checked_utc": "2026-11-25T16:28:49Z",
       "status": "no_such_product",
       "detail": "NATVPS sells no Hong Kong plan (locations: France, Canada, Netherlands, Norway, USA NY/LA, Singapore, Japan)."
     },
     "virnat": {
       "url": "https://virnat.com",
-      "checked_utc": "2026-11-25T15:16:16Z",
+      "checked_utc": "2026-11-25T16:28:59Z",
       "status": "unreachable",
       "detail": "URLError: <urlopen error [Errno 101] Network is unreachable>"
     },
     "black_friday": {
-      "checked_utc": "2026-11-25T15:16:16Z",
+      "checked_utc": "2026-11-25T16:28:59Z",
       "note": "candidates only, never hits",
       "status": "not_started",
       "detail": "Black Friday scan starts 2026-11-27; today is 2026-11-25"
