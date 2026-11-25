@@ -1,0 +1,34 @@
+name: VPS stock scan
+
+# Scans provider live pages every 30 minutes for a cheap Japan VPS
+# (<= $8/year) or Hong Kong VPS (<= $5/year) that is in stock.
+# Each run commits state.json (this also keeps the repo "active" so
+# GitHub does not pause the schedule after 60 days without pushes).
+# On a hit, HIT.md is written/updated. No emails, no notifications --
+# the files in this repo ARE the signal.
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run scanner
+        run: python3 scan.py
+      - name: Commit state
+        run: |
+          git config user.name "vps-watch-bot"
+          git config user.email "vps-watch-bot@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet || git commit -m "scan $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          git push
