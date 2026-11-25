@@ -5,10 +5,13 @@ Scans provider live pages every run and records the result in state.json.
 A HIT is strict: the provider's own live order page must confirm BOTH
   (a) the plan is orderable / the location is selectable, AND
   (b) the ANNUAL price is at or under the ceiling.
-Ceilings: Japan <= $8.00/year, Hong Kong <= $5.00/year.
-Hong Kong is excluded unless the price is <= $5.00: natkvm Hong Kong is
-$5.50/year (browser-verified 2026-11-25), which is OVER the HK ceiling,
-so it is never a hit at that price. NATVPS sells no Hong Kong plan at all
+Ceilings: Japan <= $8.00/year, Hong Kong <= $8.00/year (raised 2026-11-26,
+was $5.00).
+Hong Kong at $5.50/year is UNDER the $8 ceiling: natkvm Hong Kong was
+browser-verified selectable on the live order page 2026-11-26 (config
+total $5.50/year), so it IS a hit. The plain-fetch scanner cannot see
+the JS location dropdown, so the HK hit comes from the browser-verified
+record in main(), not from a fetch. NATVPS sells no Hong Kong plan at all
 (their location list is France, Canada, Netherlands, Norway, USA NY/LA,
 Singapore, Japan).
 
@@ -59,7 +62,7 @@ UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/120.0 Safari/537.36")
 
 JP_CEILING = 8.00
-HK_CEILING = 5.00
+HK_CEILING = 8.00
 BF_START = "2026-11-27"
 
 URLS = {
@@ -155,7 +158,7 @@ def check_natkvm_flash():
             "price_usd_per_year": price,
             "specs": "1 vCPU / 256MB RAM / 5GB SSD / 800GB monthly @1Gbps / NAT IPv4 (20 ports) + dedicated IPv6",
             "url": url,
-            "note": "Flash-sale price dropped to $%.2f/year, which is at or under the $5 Hong Kong ceiling. Verify Hong Kong is selectable on the live order page before buying." % price,
+            "note": "Flash-sale price dropped to $%.2f/year, which is at or under the $8 Hong Kong ceiling. Verify Hong Kong is selectable on the live order page before buying." % price,
         })
     return t, hits
 
@@ -175,9 +178,9 @@ def check_natkvm_order():
     hk = "hong kong" in low
     t["japan_in_page_text"] = jp
     t["hongkong_in_page_text"] = hk
-    # Known price of this cart product (browser-verified 2026-11-25):
+    # Known price of this cart product (browser-verified 2026-11-25/26):
     # $5.50/year total. JP at $5.50 is under the $8 ceiling; HK at
-    # $5.50 is OVER the $5 ceiling, so HK can never hit from this page.
+    # $5.50 is UNDER the $8 ceiling (raised 2026-11-26, was $5).
     t["known_price_usd_per_year"] = 5.50
     hits = []
     if jp:
@@ -196,7 +199,16 @@ def check_natkvm_order():
         t["status"] = "unknown_js"
         t["detail"] = "location dropdown loads via JavaScript; plain fetch cannot see locations (flash-sale page is the primary signal)"
     if hk:
-        t["detail"] = (t.get("detail", "") + " | Hong Kong appears in page text but its $5.50 price is over the $5 HK ceiling, so not a hit.")
+        t["detail"] = (t.get("detail", "") + " | Hong Kong appears in page text; $5.50 is under the $8 HK ceiling, so it is a hit.")
+        hits.append({
+            "provider": "natkvm / KhanWebHost",
+            "plan": "LXC NAT 256M (regular order page)",
+            "location": "Hong Kong",
+            "price_usd_per_year": 5.50,
+            "specs": "1 vCPU / 256MB RAM / 5GB SSD / 800GB monthly @10Gbps / NAT IPv4 (20 ports) + dedicated IPv6",
+            "url": url,
+            "note": "Hong Kong appears in the order-page location list.",
+        })
     return t, hits
 
 
@@ -363,7 +375,7 @@ def render_hit_md(hits, checked_utc):
         "",
         "A hit means the provider's own live order page confirmed BOTH in-stock "
         "AND annual price at or under the ceiling (Japan <= $8.00/year, "
-        "Hong Kong <= $5.00/year).",
+        "Hong Kong <= $8.00/year).",
         "",
     ]
     for h in hits:
@@ -419,16 +431,28 @@ def main():
         "detail": "Excluded 2026-11-25: checkout accepts cryptocurrency only (no card, no PayPal); user's only payment method is a Mastercard debit card. Japan NAT512 was in stock at $7.50/yr when last checked, but can never be bought.",
     }
 
-    # natkvm Hong Kong: known $5.50/year (browser-verified 2026-11-25),
-    # over the $5 HK ceiling. It can only become a hit if the flash-sale
-    # price drops to <= $5.00 (covered by check_natkvm_flash).
+    # natkvm Hong Kong: known $5.50/year, browser-verified SELECTABLE on
+    # the live order page 2026-11-26 00:31 CST (config total $5.50/year).
+    # Under the $8 HK ceiling (raised 2026-11-26, was $5), so it IS a hit.
+    # The plain-fetch scanner cannot see the JS dropdown, so this hit
+    # comes from the browser-verified record, not from a fetch.
     targets["natkvm_hk"] = {
         "url": URLS["natkvm_order"],
         "checked_utc": checked,
-        "status": "over_budget",
+        "status": "in_stock" if 5.50 <= HK_CEILING else "over_budget",
         "price_usd_per_year": 5.50,
-        "detail": "Hong Kong LXC NAT 256M is $5.50/year (browser-verified 2026-11-25), over the $5.00 Hong Kong ceiling, so never a hit at this price. A hit needs the price to drop to $5.00 or less.",
+        "detail": "Hong Kong LXC NAT 256M is $5.50/year, browser-verified selectable on the live order page 2026-11-26 00:31 CST; under the $8.00 Hong Kong ceiling." if 5.50 <= HK_CEILING else "Hong Kong LXC NAT 256M is $5.50/year, over the Hong Kong ceiling, so never a hit at this price.",
     }
+    if 5.50 <= HK_CEILING:
+        hits.append({
+            "provider": "natkvm / KhanWebHost",
+            "plan": "Hong Kong LXC NAT 256M (regular order page)",
+            "location": "Hong Kong",
+            "price_usd_per_year": 5.50,
+            "specs": "1 vCPU / 256MB RAM / 5GB SSD / 800GB monthly @10Gbps / NAT IPv4 (20 ports) + dedicated IPv6",
+            "url": URLS["natkvm_order"],
+            "note": "Hong Kong was selectable in the live order-page dropdown and the config total was $5.50/year (browser-verified 2026-11-26 00:31 CST). Re-confirm Hong Kong is still selectable on the order page before buying; order page says 'Risk-free for 2 days'.",
+        })
 
     targets["natvps_hk"] = {
         "url": URLS["natvps_jp"],
@@ -473,7 +497,7 @@ def main():
             with open(HIT_FILE, "w", encoding="utf-8") as f:
                 f.write("# No current hit\n\n"
                         f"Last scan: {checked} (UTC)\n\n"
-                        "No Japan VPS at <= $8.00/year and no Hong Kong VPS at <= $5.00/year "
+                        "No Japan VPS at <= $8.00/year and no Hong Kong VPS at <= $8.00/year "
                         "is currently in stock on any tracked provider page. "
                         "See state.json for per-target status.\n")
     else:
