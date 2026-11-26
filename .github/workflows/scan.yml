@@ -1,10 +1,15 @@
 name: VPS stock scan
 
-# Scans provider live pages every 30 minutes for a cheap Japan VPS
+# Scans provider live pages every 5 minutes for a cheap Japan VPS
 # (<= $8/year) or Hong Kong VPS (<= $8/year) that is in stock.
 # 2026-11-26: HK ceiling raised $5 -> $8; re-saving this file to
 # re-register the schedule with GitHub (no scheduled run had fired
 # since the workflow was created -- only manual runs).
+# 2026-11-26 10:50: cron tightened */30 -> */5 for the Black Friday
+# window (launch 2026-11-27 04:00 CST). NOTE: GitHub's scheduler
+# delays cron runs -- on */30 the runs actually fired ~hourly, so
+# */5 is best-effort (expect ~10-15 min effective). A hit still
+# needs the HIT.md hook to wake Muse.
 # Each run commits state.json (this also keeps the repo "active" so
 # GitHub does not pause the schedule after 60 days without pushes).
 # On a hit, HIT.md is written/updated. No emails, no notifications --
@@ -12,7 +17,7 @@ name: VPS stock scan
 
 on:
   schedule:
-    - cron: '*/30 * * * *'
+    - cron: '*/5 * * * *'
   workflow_dispatch:
 
 permissions:
