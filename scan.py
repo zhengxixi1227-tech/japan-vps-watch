@@ -72,6 +72,11 @@ URLS = {
     "natvps_jp": "https://clients.natvps.net/?/cart/kvm-japan/",
     "virnat": "https://virnat.com",
     "appsail_bf": "https://vps.appsail.dev/",
+    # ascsonoway free VPS (E5 2650 v0 Free Tier, Canada, IPv6-only).
+    # Free, email-only signup, 30-day renewal. Tracked separately from
+    # the Japan/HK hits: a hit here is FREE, not a paid Japan/HK deal,
+    # so it goes to FREE_VPS.md, never HIT.md.
+    "ascsonoway_free": "https://cloud.ascsonoway.com/vps-micro/",
     # LowEndSpirit Black Friday 2026 megathread (LowEndTalk). Datacenter
     # IPs are usually Cloudflare-403 here; a 403 is recorded, not fatal.
     "let_bf": "https://lowendspirit.com/discussion/8073/black-friday-2026-megathread",
@@ -79,6 +84,7 @@ URLS = {
 
 STATE_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "state.json")
 HIT_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "HIT.md")
+FREE_VPS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "FREE_VPS.md")
 
 
 def now_iso():
@@ -318,6 +324,43 @@ def check_virnat():
     return t
 
 
+def check_ascsonoway_free():
+    """ascsonoway free VPS (E5 2650 v0 Free Tier, Canada, IPv6-only).
+    Free, email-only signup, 30-day renewal. Stock is the only signal:
+    the page literally prints 'SOLD OUT' / 'Currently out of stock' while
+    sold out. Traffic is NOT published on the site. A hit means the page
+    no longer says sold out -- it is a FREE hit, not a Japan/HK hit, so
+    it goes to FREE_VPS.md, never HIT.md. A fetch failure here never
+    blocks the Japan/HK HIT.md (separate track)."""
+    url = URLS["ascsonoway_free"]
+    ok, body = fetch(url)
+    t = {"url": url, "checked_utc": now_iso()}
+    if not ok:
+        t.update(status="unreachable", detail=body)
+        return t, None
+    text = visible_text(body)
+    low = text.lower()
+    if "e5 2650" not in low:
+        t.update(status="unknown",
+                 detail="plan page does not mention E5 2650 (page layout may have changed); no hit emitted")
+        return t, None
+    out = "sold out" in low or "out of stock" in low
+    if out:
+        t.update(status="sold_out", detail="plan page says SOLD OUT / Currently out of stock")
+        return t, None
+    t.update(status="in_stock", detail="plan page no longer says sold out")
+    hit = {
+        "provider": "ascsonoway",
+        "plan": "E5 2650 v0 Free Tier",
+        "location": "Canada (Alberta)",
+        "price_usd_per_year": 0.0,
+        "specs": "1 vCPU / 512MB RAM / 16GB SSD / public IPv6 only (no IPv4) / 30-day free renewal",
+        "url": url,
+        "note": "Free, email-only signup (no card, no phone). Traffic NOT published on the site. IPv6-only -- needs Cloudflare Argo for IPv4 clients. Verify it is actually orderable on the live page before registering.",
+    }
+    return t, hit
+
+
 def check_black_friday(state):
     """Once a day, on/after 2026-11-27 only. Records candidates, never hits."""
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
@@ -399,6 +442,40 @@ def render_hit_md(hits, checked_utc):
     return "\n".join(lines)
 
 
+def render_free_vps_md(hit, checked_utc):
+    """FREE_VPS.md: the ascsonoway free VPS hit, or an explicit no-hit.
+    A hit here means the free plan's page no longer says sold out."""
+    if hit is None:
+        return ("# No current free VPS hit\n\n"
+                f"Last scan: {checked_utc} (UTC)\n\n"
+                "The ascsonoway E5 2650 v0 Free Tier is currently sold out. "
+                "See state.json (target ascsonoway_free) for the latest status.\n")
+    lines = [
+        "# FREE VPS HIT -- ascsonoway free VPS in stock",
+        "",
+        f"Last scan: {checked_utc} (UTC)",
+        "",
+        "A hit means the provider's own plan page no longer says SOLD OUT. "
+        "This is a FREE plan (email-only signup, no card, no phone), not a "
+        "paid Japan/Hong Kong deal.",
+        "",
+        f"## {hit['provider']} -- {hit['plan']}",
+        "",
+        f"- Location: {hit['location']}",
+        f"- Price: ${hit['price_usd_per_year']:.2f} / year (free)",
+        f"- Specs: {hit['specs']}",
+        f"- Proof URL: {hit['url']}",
+        f"- First seen (UTC): {hit.get('first_seen_utc', checked_utc)}",
+        f"- Last confirmed (UTC): {hit.get('last_confirmed_utc', checked_utc)}",
+        f"- Note: {hit['note']}",
+        "",
+        "---",
+        "If this file lists a hit, the free plan may be orderable right now. "
+        "Register from the proof URL above; do not trust any other link.",
+    ]
+    return "\n".join(lines)
+
+
 def main():
     prev = load_state()
     prev_hits = { (h.get("provider"), h.get("plan")): h for h in prev.get("hits", []) }
@@ -463,6 +540,21 @@ def main():
 
     targets["virnat"] = check_virnat()
 
+    # ascsonoway free VPS: separate track from the Japan/HK hits.
+    # A fetch failure here never blocks HIT.md.
+    t_asco, free_hit = check_ascsonoway_free()
+    targets["ascsonoway_free"] = t_asco
+    prev_free = prev.get("free_hits", [])
+    prev_free_by_key = {(h.get("provider"), h.get("plan")): h for h in prev_free}
+    if free_hit is not None:
+        key = (free_hit["provider"], free_hit["plan"])
+        old = prev_free_by_key.get(key, {})
+        free_hit["first_seen_utc"] = old.get("first_seen_utc", checked)
+        free_hit["last_confirmed_utc"] = checked
+        free_hits = [free_hit]
+    else:
+        free_hits = []
+
     bf = check_black_friday(prev)
     targets["black_friday"] = bf
     last_bf_check = prev.get("last_bf_check")
@@ -483,11 +575,17 @@ def main():
         "ceilings_usd_per_year": {"japan": JP_CEILING, "hongkong": HK_CEILING},
         "targets": targets,
         "hits": merged,
+        "free_hits": free_hits,
         "last_bf_check": last_bf_check,
     }
     with open(STATE_FILE, "w", encoding="utf-8") as f:
         json.dump(state, f, ensure_ascii=False, indent=2)
         f.write("\n")
+
+    # FREE_VPS.md is always rewritten (ascsonoway is a separate track;
+    # its fetch status never blocks HIT.md).
+    with open(FREE_VPS_FILE, "w", encoding="utf-8") as f:
+        f.write(render_free_vps_md(free_hits[0] if free_hits else None, checked))
 
     if definitive:
         if merged:
@@ -504,6 +602,7 @@ def main():
         print("A hit-relevant target was unreachable; HIT.md left untouched.")
 
     print(json.dumps({"checked": checked, "hits": len(merged),
+                      "free_hits": len(free_hits),
                       "statuses": {k: v.get("status") for k, v in targets.items()}},
                      ensure_ascii=False, indent=2))
 
