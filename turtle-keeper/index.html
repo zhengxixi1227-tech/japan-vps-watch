@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>乌龟卡保号助手</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 400px;
+            width: 100%;
+        }
+        h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .info-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #555;
+        }
+        .info-box strong {
+            color: #333;
+            display: block;
+            margin-bottom: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        button:hover { transform: translateY(-2px); }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        #status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 16px;
+            display: none;
+        }
+        #status.loading {
+            display: block;
+            background: #fff3cd;
+            color: #856404;
+        }
+        #status.success {
+            display: block;
+            background: #d4edda;
+            color: #155724;
+        }
+        #status.error {
+            display: block;
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .stats {
+            margin-top: 10px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .history {
+            margin-top: 25px;
+        }
+        .history h3 {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .history-item {
+            padding: 8px 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #555;
+        }
+        .warning {
+            margin-top: 25px;
+            padding: 15px;
+            background: #fff3cd;
+            border-radius: 10px;
+            font-size: 13px;
+            color: #856404;
+            line-height: 1.8;
+        }
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🐢 乌龟卡保号助手</h1>
+        <div class="subtitle">乌龟卡（eSIM.GG）极简流量消耗工具</div>
+
+        <div class="info-box">
+            <strong>本次将消耗：</strong>
+            约 20 KB 数据流量
+        </div>
+
+        <div class="info-box">
+            <strong>预计费用：</strong>
+            不到 €0.01（约 ¥0.08）
+        </div>
+
+        <button id="btn" onclick="consumeData()">🐢 开始保号</button>
+
+        <div id="status"></div>
+
+        <div class="history">
+            <h3>使用记录</h3>
+            <div id="historyList"></div>
+        </div>
+
+        <div class="warning">
+            ⚠️ 使用前必读：<br>
+            1. 关闭 Wi-Fi，确保使用移动数据<br>
+            2. 蜂窝数据切到乌龟卡，并打开乌龟卡的数据漫游<br>
+            3. 只在 iPhone 上操作，别用安卓（安卓后台偷跑流量）<br>
+            4. 完成后立即关闭数据漫游，切回主卡<br>
+            5. 流量功能 2026-12-03 才解锁，在此之前点也没用
+        </div>
+
+        <div class="footer">
+            保号到期：2027-11-27<br>
+            365 天内任意一次流量 / 通话 / 短信 / 充值即可续期
+        </div>
+    </div>
+
+    <script>
+        // 加载历史记录
+        function loadHistory() {
+            const history = JSON.parse(localStorage.getItem('turtleHistory') || '[]');
+            const historyList = document.getElementById('historyList');
+
+            if (history.length === 0) {
+                historyList.innerHTML = '<div class="history-item">暂无记录</div>';
+                return;
+            }
+
+            historyList.innerHTML = history.slice(-5).reverse().map(item =>
+                `<div class="history-item">✓ ${item.date} - ${item.size} KB</div>`
+            ).join('');
+        }
+
+        // 保存历史记录
+        function saveHistory(size) {
+            const history = JSON.parse(localStorage.getItem('turtleHistory') || '[]');
+            const now = new Date();
+            const dateStr = `${now.getMonth()+1}/${now.getDate()} ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+            history.push({
+                date: dateStr,
+                size: size,
+                timestamp: now.getTime()
+            });
+
+            // 只保留最近20条记录
+            if (history.length > 20) {
+                history.shift();
+            }
+
+            localStorage.setItem('turtleHistory', JSON.stringify(history));
+            loadHistory();
+        }
+
+        function consumeData() {
+            const btn = document.getElementById('btn');
+            const status = document.getElementById('status');
+
+            btn.disabled = true;
+            status.className = 'loading';
+            status.innerHTML = "📡 正在连接服务器...<br><div class='stats'>请保持网络连接</div>";
+
+            // 防缓存：添加时间戳
+            const timestamp = new Date().getTime();
+            const randomStr = Math.random().toString(36).substring(7);
+            const fileUrl = `payload.txt?t=${timestamp}&r=${randomStr}`;
+
+            const startTime = new Date().getTime();
+
+            fetch(fileUrl, {
+                cache: 'no-store',  // 强制不使用缓存
+                headers: {
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache'
+                }
+            })
+                .then(response => {
+                    if (!response.ok) throw new Error('网络请求失败');
+                    return response.blob();
+                })
+                .then(blob => {
+                    const sizeInKB = (blob.size / 1024).toFixed(2);
+                    const duration = ((new Date().getTime() - startTime) / 1000).toFixed(2);
+
+                    status.className = 'success';
+                    status.innerHTML = `
+                        ✅ 保号成功！
+                        <div class='stats'>
+                            已消耗：${sizeInKB} KB<br>
+                            耗时：${duration} 秒
+                        </div>
+                    `;
+
+                    // 保存记录
+                    saveHistory(sizeInKB);
+
+                    btn.disabled = false;
+                    btn.innerHTML = '🐢 再保一次';
+                })
+                .catch(error => {
+                    status.className = 'error';
+                    status.innerHTML = `❌ 失败：${error.message}<br><div class='stats'>请检查网络后重试</div>`;
+                    btn.disabled = false;
+                });
+        }
+
+        // 页面加载时显示历史记录
+        loadHistory();
+    </script>
+</body>
+</html>
