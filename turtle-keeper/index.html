@@ -140,7 +140,7 @@
 
         <div class="info-box">
             <strong>预计费用：</strong>
-            不到 €0.001（约 ¥0.008）
+            约 ¥0.004（不到 ¥0.01）
         </div>
 
         <button id="btn" onclick="consumeData()">🐢 开始保号</button>
@@ -163,7 +163,8 @@
 
         <div class="footer">
             保号到期：2027-11-27<br>
-            365 天内任意一次流量 / 通话 / 短信 / 充值即可续期
+            365 天内任意一次流量 / 通话 / 短信 / 充值即可续期<br>
+            费用为估算（按中国最贵流量价 €4.7/GB），真实余额以 eSIM.GG 账号为准
         </div>
     </div>
 
@@ -233,13 +234,24 @@
                 .then(blob => {
                     const sizeInKB = (blob.size / 1024).toFixed(2);
                     const duration = ((new Date().getTime() - startTime) / 1000).toFixed(2);
+                    // 费用估算：按中国漫游最贵价 €4.7/GB，€1 ≈ ¥7.8，账户初始余额 €1.00
+                    const costEUR = (blob.size / 1073741824) * 4.7;
+                    const costCNY = costEUR * 7.8;
+                    let total = JSON.parse(localStorage.getItem('turtleTotal') || '{"costEUR":0,"uses":0}');
+                    total.costEUR = (total.costEUR || 0) + costEUR;
+                    total.uses = (total.uses || 0) + 1;
+                    localStorage.setItem('turtleTotal', JSON.stringify(total));
+                    const remainEUR = 1.00 - total.costEUR;
+                    const remainCNY = remainEUR * 7.8;
 
                     status.className = 'success';
                     status.innerHTML = `
                         ✅ 保号成功！
                         <div class='stats'>
                             已消耗：${sizeInKB} KB<br>
-                            耗时：${duration} 秒
+                            耗时：${duration} 秒<br>
+                            本次花费：约 ¥${costCNY.toFixed(3)}<br>
+                            余额：约 ¥${remainCNY.toFixed(2)}（€${remainEUR.toFixed(2)}）
                         </div>
                     `;
 
