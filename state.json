@@ -1,5 +1,5 @@
 {
-  "last_checked_utc": "2026-11-28T10:49:13Z",
+  "last_checked_utc": "2026-11-28T11:38:13Z",
   "ceilings_usd_per_year": {
     "japan": 8.0,
     "hongkong": 8.0
@@ -7,14 +7,14 @@
   "targets": {
     "natkvm_jp_flash": {
       "url": "https://khanwebhost.com/store/nat-vps-flash-sale/256-mb-sgjphksasepknlde",
-      "checked_utc": "2026-11-28T10:49:14Z",
+      "checked_utc": "2026-11-28T11:38:14Z",
       "price_usd_per_year": 5.5,
       "detail": "flash-sale page says out of stock",
       "status": "out_of_stock"
     },
     "natkvm_jp_order": {
       "url": "https://khanwebhost.com/store/ovz-nat-vps/lxc-256-mb-nat",
-      "checked_utc": "2026-11-28T10:49:18Z",
+      "checked_utc": "2026-11-28T11:38:17Z",
       "japan_in_page_text": false,
       "hongkong_in_page_text": false,
       "known_price_usd_per_year": 5.5,
@@ -23,7 +23,7 @@
     },
     "natkvm_jp_page": {
       "url": "https://natkvm.net/japan-nat-vps.html",
-      "checked_utc": "2026-11-28T10:49:18Z",
+      "checked_utc": "2026-11-28T11:38:17Z",
       "price_usd_per_year": 6.5,
       "order_link_present": true,
       "status": "listed",
@@ -31,37 +31,37 @@
     },
     "natvps_jp_nat512": {
       "url": "https://clients.natvps.net/?/cart/kvm-japan/",
-      "checked_utc": "2026-11-28T10:49:13Z",
+      "checked_utc": "2026-11-28T11:38:13Z",
       "status": "excluded",
       "detail": "Excluded 2026-11-25: checkout accepts cryptocurrency only (no card, no PayPal); user's only payment method is a Mastercard debit card. Japan NAT512 was in stock at $7.50/yr when last checked, but can never be bought."
     },
     "natkvm_hk": {
       "url": "https://khanwebhost.com/store/ovz-nat-vps/lxc-256-mb-nat",
-      "checked_utc": "2026-11-28T10:49:13Z",
+      "checked_utc": "2026-11-28T11:38:13Z",
       "status": "in_stock",
       "price_usd_per_year": 5.5,
       "detail": "Hong Kong LXC NAT 256M is $5.50/year, browser-verified selectable on the live order page 2026-11-26 00:31 CST; under the $8.00 Hong Kong ceiling."
     },
     "natvps_hk": {
       "url": "https://clients.natvps.net/?/cart/kvm-japan/",
-      "checked_utc": "2026-11-28T10:49:13Z",
+      "checked_utc": "2026-11-28T11:38:13Z",
       "status": "no_such_product",
       "detail": "NATVPS sells no Hong Kong plan (locations: France, Canada, Netherlands, Norway, USA NY/LA, Singapore, Japan)."
     },
     "virnat": {
       "url": "https://virnat.com",
-      "checked_utc": "2026-11-28T10:49:41Z",
+      "checked_utc": "2026-11-28T11:38:21Z",
       "status": "unreachable",
       "detail": "URLError: <urlopen error [Errno -3] Temporary failure in name resolution>"
     },
     "ascsonoway_free": {
       "url": "https://cloud.ascsonoway.com/vps-micro/",
-      "checked_utc": "2026-11-28T10:49:42Z",
+      "checked_utc": "2026-11-28T11:38:21Z",
       "status": "sold_out",
       "detail": "plan page says SOLD OUT / Currently out of stock"
     },
     "black_friday": {
-      "checked_utc": "2026-11-28T10:49:42Z",
+      "checked_utc": "2026-11-28T11:38:21Z",
       "note": "candidates only, never hits",
       "status": "already_checked_today",
       "detail": "already scanned once today (2026-11-28)"
@@ -77,7 +77,7 @@
       "url": "https://khanwebhost.com/store/ovz-nat-vps/lxc-256-mb-nat",
       "note": "Hong Kong was selectable in the live order-page dropdown and the config total was $5.50/year (browser-verified 2026-11-26 00:31 CST). Re-confirm Hong Kong is still selectable on the order page before buying; order page says 'Risk-free for 2 days'.",
       "first_seen_utc": "2026-11-25T16:32:43Z",
-      "last_confirmed_utc": "2026-11-28T10:49:13Z"
+      "last_confirmed_utc": "2026-11-28T11:38:13Z"
     }
   ],
   "free_hits": [],
