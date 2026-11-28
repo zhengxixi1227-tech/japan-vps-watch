@@ -28,12 +28,12 @@
   "sources": {
     "tg:simcardshop01": {
       "status": "ok",
-      "checked_utc": "2026-11-28T12:55:29Z",
+      "checked_utc": "2026-11-28T18:46:33Z",
       "posts_seen": 18
     },
     "tg:CarterCarlChannel": {
       "status": "ok",
-      "checked_utc": "2026-11-28T12:55:30Z",
+      "checked_utc": "2026-11-28T18:46:34Z",
       "posts_seen": 6
     }
   },
@@ -47,6 +47,6 @@
       "source": "telegram"
     }
   ],
-  "last_checked_utc": "2026-11-28T12:55:30Z",
+  "last_checked_utc": "2026-11-28T18:46:34Z",
   "new_leads_this_run": 0
 }
