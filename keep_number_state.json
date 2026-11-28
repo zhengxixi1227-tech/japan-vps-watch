@@ -1,0 +1,51 @@
+{
+  "seen_ids": [
+    "CarterCarlChannel/4",
+    "CarterCarlChannel/6",
+    "CarterCarlChannel/7",
+    "CarterCarlChannel/8",
+    "CarterCarlChannel/9",
+    "simcardshop01/375",
+    "simcardshop01/377",
+    "simcardshop01/378",
+    "simcardshop01/380",
+    "simcardshop01/381",
+    "simcardshop01/382",
+    "simcardshop01/383",
+    "simcardshop01/385",
+    "simcardshop01/387",
+    "simcardshop01/388",
+    "simcardshop01/389",
+    "simcardshop01/390",
+    "simcardshop01/391",
+    "simcardshop01/392",
+    "simcardshop01/395",
+    "simcardshop01/397",
+    "simcardshop01/401",
+    "simcardshop01/402"
+  ],
+  "sources": {
+    "tg:simcardshop01": {
+      "status": "ok",
+      "checked_utc": "2026-11-28T05:59:48Z",
+      "posts_seen": 18
+    },
+    "tg:CarterCarlChannel": {
+      "status": "ok",
+      "checked_utc": "2026-11-28T05:59:50Z",
+      "posts_seen": 5
+    }
+  },
+  "leads": [
+    {
+      "id": "simcardshop01/385",
+      "date": "2025-01-18",
+      "text": "🇬🇧 CMLink UK（中国移动英国）已支持eSIM开卡 根据CMLink UK客服回复，现有客户的实体SIM卡将于20号前后支持转换为eSIM 中国漫游流量套餐： 1️⃣ 10英镑/20天，包含15G中国内地流量 2️⃣ 19英镑/90天，包含40G中国内地流量 保号： （三者满足其一即可） 1.保持卡内有活跃套餐 2.如订购90天漫游套餐，储值卡需在套餐到期后30天内续费 3. 转PayGo套餐： 发邮件给 csuk@cmlink.com ，提供你的CMLink eSIM的手机号码及ICCID，说明近期不会回到英国，想请求更换套餐为PayGo 0月租套餐，此时eSIM保号条件与实体卡一致，为180日内任意余额变动保号 中国大陆漫游资费： 收短信：免费 发短信：0.5gbp/条 打电话：1.5gbp/分钟 接电话：1.5gbp/分钟 用流量：0.1gbp/MB eSIM换设备方法：”找CMLink UK客服刷新eSIM状态后扫描原先二维码即可 可在 https://www.cmlink.com/uk/zh 选套餐后直接定卡 ⚠️ CMLink UK需要在英国、欧盟、（中国香港）激活",
+      "url": "https://t.me/simcardshop01/385",
+      "reason": "anchor=保号,0月租,PayGo price=免费,月租,0月租",
+      "source": "telegram"
+    }
+  ],
+  "last_checked_utc": "2026-11-28T05:59:50Z",
+  "new_leads_this_run": 1
+}
