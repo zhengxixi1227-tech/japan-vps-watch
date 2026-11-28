@@ -1,5 +1,6 @@
 {
   "seen_ids": [
+    "CarterCarlChannel/10",
     "CarterCarlChannel/4",
     "CarterCarlChannel/6",
     "CarterCarlChannel/7",
@@ -27,13 +28,13 @@
   "sources": {
     "tg:simcardshop01": {
       "status": "ok",
-      "checked_utc": "2026-11-28T06:04:59Z",
+      "checked_utc": "2026-11-28T12:55:29Z",
       "posts_seen": 18
     },
     "tg:CarterCarlChannel": {
       "status": "ok",
-      "checked_utc": "2026-11-28T06:05:00Z",
-      "posts_seen": 5
+      "checked_utc": "2026-11-28T12:55:30Z",
+      "posts_seen": 6
     }
   },
   "leads": [
@@ -46,6 +47,6 @@
       "source": "telegram"
     }
   ],
-  "last_checked_utc": "2026-11-28T06:05:00Z",
+  "last_checked_utc": "2026-11-28T12:55:30Z",
   "new_leads_this_run": 0
 }
